@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Términos Clave de Seguridad de Aplicaciones en Spring Boot</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  .container {
+    max-width: 800px;
+    margin: auto;
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+  }
+  .header, .nav {
+    background-color: #ff6666;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .nav {
+    border-radius: 0;
+    text-align: center;
+  }
+  .nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+  }
+  .nav a:hover {
+    text-decoration: underline;
+  }
+  .term {
+    font-weight: bold;
+  }
+  .definition {
+    margin-bottom: 15px;
+  }
+  .code-example {
+    background-color: #e7e7e7;
+    border-left: 5px solid #ff6666;
+    padding: 10px;
+    margin-top: 10px;
+    font-family: "Courier New", Courier, monospace;
+  }
+</style>
+</head>
+<body>
+<div class="nav">
+  <a href="#identidad">Identidad</a> |
+  <a href="#credenciales">Credenciales</a> |
+  <a href="#autenticacion">Autenticación</a> |
+  <a href="#autorizacion">Autorización</a>
+</div>
+<div class="container">
+  <div class="header">
+    <h1>Términos Clave de Seguridad de Aplicaciones en Spring Boot</h1>
+  </div>
+  <div class="definition" id="identidad">
+    <div class="term">Identidad:</div>
+    <div>Un actor único, típicamente un individuo conocido como usuario.</div>
+    <div class="code-example">
+      // Ejemplo: UserDetails userDetails = new User("username", "password", authorities);
+    </div>
+  </div>
+  <div class="definition" id="credenciales">
+    <div class="term">Credenciales:</div>
+    <div>Usualmente un ID de usuario y contraseña.</div>
+    <div class="code-example">
+      // Ejemplo: Authentication auth = new UsernamePasswordAuthenticationToken("username", "password");
+    </div>
+  </div>
+  <div class="definition" id="autenticacion">
+    <div class="term">Autenticación:</div>
+    <div>Es cómo la aplicación verifica la identidad del solicitante.</div>
+    <div class="code-example">
+      // Ejemplo: Authentication result = authenticationManager.authenticate(auth);
+    </div>
+  </div>
+  <div class="definition" id="autorizacion">
+    <div class="term">Autorización:</div>
+    <div>¿Puede un usuario realizar una acción?</div>
+    <div class="code-example">
+      // Ejemplo:
+      @PreAuthorize("hasRole('ADMIN')")
+      public String metodoAdministrativo() {
+          return "Acción administrativa realizada";
+      }
+    </div>
+    <div class="code-example">
+      // Ejemplo de creación de un usuario con autoridades en Spring Boot
+      <pre>
+        List&lt;GrantedAuthority&gt; authorities = new ArrayList&lt;&gt;();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        UserDetails userDetails = new User("username", "password", authorities);
+      </pre>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Fragmento de Comentario</title>
+</head>
+
+<body>
+	<!---
+	comentarioFragment
+	-->
+	<div th:fragment="comentarioFragment">
+		<div>
+			<div class="comentario" th:if="${comentarios != null}">
+				<table>
+					<tr  th:each="comentario : ${comentarios}">
+						<td >
+							<p th:text="${comentario.usuario?.username}">
+						</td>
+						<td>
+							<span th:utext="${comentario.contenido}"></span>
+						</td>
+					</tr>
+				</table>
+	
+			</div>
+
+
+		</div>
+
+		<!-- Controles de Paginación -->
+   <nav class="pagination">
+	
+   <ul >
+				   <!-- Enlace "Inicio" -->
+       <li th:if="${comentarios.number > 0}" class="page-item">
+           <a th:href="@{/user/home( page=0)}" class="page-link">Inicio</a>
+       </li>
+   <!-- Enlace "Anterior" -->
+       <li th:if="${comentarios.hasPrevious()}" class="page-item">
+           <a th:href="@{/user/home( page=${comentarios.number - 1})}" class="page-link">Anterior</a>
+       </li>
+
+   <!-- Enlace a la página anterior a la actual, si existe -->
+       <li th:if="${comentarios.number > 1}" class="page-item">
+           <a th:href="@{/user/home( page=${comentarios.number - 2})}" class="page-link" th:text="${comentarios.number - 1}"></a>
+       </li>
+       <!-- Enlace a la página actual -->
+       <li class="page-item active">
+           <a th:href="@{/user/home( page=${comentarios.number})}" class="page-link" th:text="${comentarios.number + 1}"></a>
+       </li>
+       <!-- Enlace a la página siguiente a la actual, si existe -->
+       <li th:if="${comentarios.number + 1 < comentarios.totalPages}" class="page-item">
+           <a th:href="@{/user/home( page=${comentarios.number + 1})}" class="page-link" th:text="${comentarios.number + 2}"></a>
+       </li>
+
+       <!-- Enlace "Siguiente" -->
+       <li th:if="${comentarios.hasNext()}" class="page-item">
+           <a th:href="@{/user/home( page=${comentarios.number + 1})}" class="page-link">Siguiente</a>
+       </li>
+        <!-- Enlace "Fin" -->
+       <li th:if="${comentarios.number + 1 < comentarios.totalPages}" class="page-item">
+           <a th:href="@{/user/home( page=${comentarios.totalPages - 1})}" class="page-link">Fin</a>
+       </li>
+       </ul>
+   </nav>
+	</div>
+
+ <!--EnlaceComentarioFragment -->
+    <div th:fragment="enlaceformularioComentarioFragment">
+       <a th:href="@{/user/agregarComentario}">Publicar comentario</a>
+    </div>
+ 
+</body>
+
+</html>
