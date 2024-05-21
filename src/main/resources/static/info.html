@@ -312,6 +312,60 @@
       </div>
     </div>
 
+
+
+<button class="accordion">Breakpoints para Entender la Autenticación</button>
+  <div class="panel">
+    <div class="definition">
+      <div class="term">1. Security Configuration</div>
+      <div>Clase: <strong>WebSecurityConfig</strong></div>
+      <div>Método: <code>securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration)</code></div>
+      <div>Este método configura la cadena de filtros de seguridad y define las reglas de acceso.</div>
+    </div>
+    <div class="definition">
+      <div class="term">2. Authentication Manager</div>
+      <div>Clase: <strong>AuthenticationManager</strong></div>
+      <div>Método: <code>authenticate(Authentication authentication)</code></div>
+      <div>Este método es responsable de autenticar al usuario.</div>
+    </div>
+    <div class="definition">
+      <div class="term">3. Authentication Provider</div>
+      <div>Clase: <strong>AuthenticationProvider</strong></div>
+      <div>Método: <code>authenticate(Authentication authentication)</code></div>
+      <div>Este método verifica las credenciales del usuario. Puedes tener un <code>DaoAuthenticationProvider</code> o un proveedor personalizado.</div>
+    </div>
+    <div class="definition">
+      <div class="term">4. UserDetailsService</div>
+      <div>Clase: <strong>UsuarioPersonalizadoDetailsService</strong></div>
+      <div>Método: <code>loadUserByUsername(String username)</code></div>
+      <div>Este método carga los detalles del usuario desde la base de datos o cualquier otro servicio de persistencia.</div>
+    </div>
+    <div class="definition">
+      <div class="term">5. Custom Authentication Success Handler</div>
+      <div>Clase: <strong>CustomAuthenticationSuccessHandler</strong></div>
+      <div>Método: <code>onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)</code></div>
+      <div>Este método maneja el comportamiento después de una autenticación exitosa.</div>
+    </div>
+    <div class="definition">
+      <div class="term">6. Filter for Authentication</div>
+      <div>Clase: <strong>FiltroDeAutenticacionPersonalizado</strong></div>
+      <div>Método: <code>doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)</code></div>
+      <div>Este método maneja la redirección de usuarios después de la autenticación.</div>
+    </div>
+    <div class="definition">
+      <div class="term">7. Login Form Handling</div>
+      <div>Clase: <strong>MainController</strong></div>
+      <div>Método: <code>showLoginForm(Model model, HttpServletRequest request)</code></div>
+      <div>Este método maneja la presentación del formulario de inicio de sesión.</div>
+    </div>
+    <div class="definition">
+      <div class="term">8. Security Context</div>
+      <div>Clase: <strong>SecurityContext</strong></div>
+      <div>Método: <code>setAuthentication(Authentication authentication)</code></div>
+      <div>Este método establece la autenticación en el contexto de seguridad.</div>
+    </div>
+  </div>
+
   </div>
 </div>
 </body>
