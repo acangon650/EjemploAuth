@@ -17,6 +17,12 @@ import com.github.javafaker.Faker;
 
 import jakarta.transaction.Transactional;
 
+/**
+ * Clase para inicializar datos en la base de datos al inicio de la aplicación.
+ * Implementa {@link CommandLineRunner} para ejecutar el método run al iniciar la aplicación.
+ * 
+ * @version 1.0
+ */
 @Component
 public class InicializarDatos implements CommandLineRunner {
 
@@ -30,7 +36,12 @@ public class InicializarDatos implements CommandLineRunner {
 	 private PasswordEncoder passwordEncoder;
 
 	 Faker faker = new Faker();
-
+	 /**
+	     * Método ejecutado al inicio de la aplicación para inicializar datos.
+	     * 
+	     * @param args argumentos de línea de comandos
+	     * @throws Exception si ocurre un error durante la inicialización
+	     */
 	 @Override
 	 public void run(String... args) throws Exception {
 		   // Asegúrate de que los roles existan
@@ -60,7 +71,14 @@ public class InicializarDatos implements CommandLineRunner {
 		    crearComentarioUsuario("user2");
 	 }
 
-
+	 /**
+	     * Crea o busca un usuario en la base de datos y le asigna un rol.
+	     * 
+	     * @param username el nombre de usuario
+	     * @param password la contraseña del usuario
+	     * @param rol el rol a asignar al usuario
+	     * @return el usuario creado o encontrado
+	     */
 	 @Transactional
 	 private Usuario crearOBuscarUsuario(String username, String password, RolUsuario rol) {
 	     return usuarioRepository.findByUsername(username).orElseGet(() -> {
@@ -80,7 +98,11 @@ public class InicializarDatos implements CommandLineRunner {
 	         return usuarioRepository.save(nuevoUsuario);
 	     });
 	 }
-	 
+	    /**
+	     * Crea comentarios para un usuario específico.
+	     * 
+	     * @param usuario el nombre de usuario
+	     */
 	 @Transactional
 	 private void crearComentarioUsuario(String usuario) {
 	     Usuario user = usuarioRepository.findByUsername(usuario).orElse(null);

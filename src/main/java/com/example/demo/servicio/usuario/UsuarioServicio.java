@@ -16,59 +16,101 @@ import com.example.demo.repositorio.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
+/**
+ * Servicio para la gestión de usuarios.
+ * 
+ * <p>Proporciona métodos para guardar, obtener y verificar usuarios en la base de datos.</p>
+ * 
+ * @version 1.0
+ */
 @Service
 public class UsuarioServicio {
 
-	@Autowired
-	UsuarioRepository usuarioRepositorio;
-	
-	 @Autowired
-	 private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UsuarioRepository usuarioRepositorio;
 
-	public Usuario guardar(Usuario usuario) {
-		// Codificar la contraseña antes de guardar el usuario
-	    // Codificar la contraseña
-	    usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-	    // Establecer la relación bidireccional
-	    if (usuario.getPerfilusuario() != null) {
-	        usuario.getPerfilusuario().setUsuario(usuario);
-	    }
-		
-		return usuarioRepositorio.save(usuario);
-	}
+    /**
+     * Guarda un usuario en la base de datos.
+     * 
+     * <p>Este método codifica la contraseña del usuario antes de guardarlo y establece
+     * la relación bidireccional con el perfil de usuario.</p>
+     * 
+     * @param usuario El usuario a guardar.
+     * @return El usuario guardado con su ID generado.
+     */
+    public Usuario guardar(Usuario usuario) {
+        // Codificar la contraseña antes de guardar el usuario
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-	public Usuario obtenerPorId(Long id) {
-		Optional<Usuario> resultado = usuarioRepositorio.findById(id);
-		if (resultado.isPresent()) {
-			return resultado.get();
-		} else {
-			// Manejar el caso en que el comentario no se encuentra.
-			// Podrías lanzar una excepción o devolver null.
-			return null;
-		}
-	}
-	@Transactional
-	public Usuario obtenerPorUsername(String username) {
-		return usuarioRepositorio.findByUsername(username).get();
+        // Establecer la relación bidireccional
+        if (usuario.getPerfilusuario() != null) {
+            usuario.getPerfilusuario().setUsuario(usuario);
+        }
 
-	}
+        return usuarioRepositorio.save(usuario);
+    }
 
-	@Transactional
-	public UsuarioDTO obtenerUsuarioDTO(String username) {
-		Usuario usuario = obtenerPorUsername(username);
-		return convertirAUsuarioDTO(usuario);
-	}
+    /**
+     * Busca un usuario por su ID.
+     * 
+     * @param id El ID del usuario a buscar.
+     * @return El usuario encontrado o null si no se encuentra.
+     */
+    public Usuario obtenerPorId(Long id) {
+        Optional<Usuario> resultado = usuarioRepositorio.findById(id);
+        return resultado.orElse(null);
+    }
 
-	private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {
-		Set<String> roles = usuario.getRoles().stream().map(Enum::name).collect(Collectors.toSet());
-		return new UsuarioDTO(usuario.getId(), usuario.getUsername(), roles);
-	}
+    /**
+     * Busca un usuario por su nombre de usuario.
+     * 
+     * <p>Este método está anotado con @Transactional para garantizar la consistencia de la transacción.</p>
+     * 
+     * @param username El nombre de usuario a buscar.
+     * @return El usuario encontrado.
+     */
+    @Transactional
+    public Usuario obtenerPorUsername(String username) {
+        return usuarioRepositorio.findByUsername(username).orElse(null);
+    }
 
-	public boolean existe(String username) {
-		return usuarioRepositorio.existsByUsername(username);
-	}
-	
-	
+    /**
+     * Convierte un Usuario en un UsuarioDTO.
+     * 
+     * <p>Este método convierte una entidad Usuario en un DTO para su uso en la capa de presentación.</p>
+     * 
+     * @param usuario El usuario a convertir.
+     * @return El UsuarioDTO correspondiente.
+     */
+    private UsuarioDTO convertirAUsuarioDTO(Usuario usuario) {
+        Set<String> roles = usuario.getRoles().stream().map(Enum::name).collect(Collectors.toSet());
+        return new UsuarioDTO(usuario.getId(), usuario.getUsername(), roles);
+    }
 
+    /**
+     * Obtiene un UsuarioDTO por nombre de usuario.
+     * 
+     * <p>Este método está anotado con @Transactional para garantizar la consistencia de la transacción.</p>
+     * 
+     * @param username El nombre de usuario a buscar.
+     * @return El UsuarioDTO correspondiente.
+     */
+    @Transactional
+    public UsuarioDTO obtenerUsuarioDTO(String username) {
+        Usuario usuario = obtenerPorUsername(username);
+        return convertirAUsuarioDTO(usuario);
+    }
+
+    /**
+     * Verifica si un usuario existe por su nombre de usuario.
+     * 
+     * @param username El nombre de usuario a verificar.
+     * @return true si el usuario existe, false en caso contrario.
+     */
+    public boolean existe(String username) {
+        return usuarioRepositorio.existsByUsername(username);
+    }
 }

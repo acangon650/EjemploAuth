@@ -3,7 +3,6 @@ package com.example.demo.dto;
 import java.util.Set;
 
 
-
 public class UsuarioDTO {
 	 private Long id;
 	    private String username;

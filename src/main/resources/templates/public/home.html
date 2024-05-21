@@ -4,29 +4,32 @@
 <head>
     <title>Comentarios</title>
     <!-- Incluir Bootstrap CSS desde CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+ 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/estilo.css}" />
 </head>
 
-<body>
 
+<body>
     <div class="container mt-4">
         <!-- Encabezado de la página -->
         <header th:replace="~{fragments/header :: headerFragment}"></header>
 
-        <main role="main">
-            <!-- Contenido principal -->
-            <div class="row">
-                <div class="col-md-8">
-                    <h2>Comentarios</h2>
-                   <!-- <div th:replace="~{fragments/comentarios :: comentarioFragment}"></div> -->
-                </div>
-    
+        <div class="row">
+            <div class="col-md-8">
+                <h4>Comentarios</h4>
+                 <div th:each="comentario : ${comentarios}" class="comentario">
+        <p>
+            <span th:text="${comentario.usuario.username}"></span>: 
+            <span th:text="${comentario.contenido}"></span>
+        </p>
+        <!-- <p class="fecha" th:text="${#temporals.format(comentario.fechaCreacion, 'yyyy-MM-dd HH:mm')}"></p>-->
+    </div>
+
             </div>
-        </main>
+        </div>
 
         <!-- Pie de página -->
         <footer th:replace="~{fragments/footer :: footerFragment}"></footer>
-
     </div>
 
     <!-- Optional Bootstrap JavaScript -->

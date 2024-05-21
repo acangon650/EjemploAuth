@@ -33,74 +33,86 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-	
 
-	@Autowired
-	ComentarioServicio comentariosServicio;
-	@Autowired
-	UsuarioServicio usuarioServicio;
+    @Autowired
+    private ComentarioServicio comentariosServicio;
 
-	private final String HOME = "auth/user/home";
+    @Autowired
+    private UsuarioServicio usuarioServicio;
 
-	@GetMapping("/home")
-    @PreAuthorize("hasRole('USER')")
-    public String user(Model model, Authentication authentication, 
-    		@RequestParam(value = "page", defaultValue = "0") int page, /* PAGINACIÓN */
-            @RequestParam(value = "size", defaultValue = "5") int size, /* PAGINACIÓN */
-            @RequestParam(required = false) String username, /*FILTRAR POR USUARIO*/
-            @RequestParam(required = false) String palabraClave, /* PARA BUSCAR */
-            HttpServletRequest request ) /* Para obtener URI -> request.getRequestURI()*/
-    {
-     
+    private static final String HOME = "auth/user/home";
 
-		
-		String usernameAuth = authentication.getName(); // Obtener el nombre de usuario del objeto de autenticación
-	 model.addAttribute("username", usernameAuth); // Agregarlo al modelo
-	 
-	 UsuarioDTO usuarioDTO = usuarioServicio.obtenerUsuarioDTO(usernameAuth);
-	 model.addAttribute("usuarioDTO", usuarioDTO);
-    
-	 //Para el <Select>Usuario</Select>
-	 model.addAttribute("usuarios", comentariosServicio.obtenerUsuariosConComentarios());
-
-    //Para crear <form>Comentarios </form>
-    model.addAttribute("comentario", new Comentario());
-    
     /**
-     * #######################
-     * ##    PÁGINACIÓN     ##
-     * #######################	 
+     * Maneja las solicitudes GET a la URL "/user/home".
+     * 
+     * <p>Este método muestra la página de inicio para los usuarios registrados,
+     * con la lista de comentarios paginada y opciones de filtrado.</p>
+     * 
+     * @param model el modelo para la vista
+     * @param authentication la autenticación del usuario
+     * @param page el número de página para la paginación
+     * @param size el tamaño de la página para la paginación
+     * @param username el nombre de usuario para filtrar los comentarios
+     * @param palabraClave la palabra clave para buscar en los comentarios
+     * @param request la solicitud HTTP
+     * @return el nombre de la vista para la página de inicio del usuario
      */
-    
-    //Obtener { Comentarios } ordenar por fecha de creación
-    PageRequest pageRequest = PageRequest.of(page, size,Sort.by("fechaCreacion").descending());
-    Page<Comentario> comentarios = null;
+    @GetMapping("/home")
+    @PreAuthorize("hasRole('USER')")
+    public String user(Model model, Authentication authentication,
+                       @RequestParam(value = "page", defaultValue = "0") int page,
+                       @RequestParam(value = "size", defaultValue = "5") int size,
+                       @RequestParam(required = false) String username,
+                       @RequestParam(required = false) String palabraClave,
+                       HttpServletRequest request) {
 
-    // Manejar errores si username o palabraClave son nulos o vacíos
-    if (username == null) {
-        username = "";
-    }
-    if (palabraClave == null) {
-        palabraClave = "";
-    }
+        String usernameAuth = authentication.getName(); // Obtener el nombre de usuario del objeto de autenticación
+        model.addAttribute("username", usernameAuth); // Agregarlo al modelo
 
-    if (palabraClave != null && !palabraClave.isEmpty()) {
-        comentarios = comentariosServicio.buscarPorPalabraClave(pageRequest, palabraClave);
-        System.out.println("#COMENTARIOS CON PALABRA CLAVE '" + palabraClave + "': " + comentarios);
-    } else if (username != null && !username.isEmpty() && usuarioServicio.existe(username)) {
-        comentarios = comentariosServicio.listarFiltroPorUsuario(pageRequest, username);
-        System.out.println("#COMENTARIOS DE USUARIO '" + username + "': " + comentarios);
-    } else {
-        comentarios = comentariosServicio.listarTodos(pageRequest);
-        System.out.println("#COMENTARIOS TOTALES: " + comentarios);
-    }
-   
-    try {
-    	PerfilUsuario perfilUsuario = usuarioServicio.obtenerPorUsername(usernameAuth).getPerfilusuario();
-	    model.addAttribute("perfilUsuario", perfilUsuario);
-    } catch (Exception e) {
-    }
-   
+        UsuarioDTO usuarioDTO = usuarioServicio.obtenerUsuarioDTO(usernameAuth);
+        model.addAttribute("usuarioDTO", usuarioDTO);
+
+        // Para el <Select>Usuario</Select>
+        model.addAttribute("usuarios", comentariosServicio.obtenerUsuariosConComentarios());
+
+        // Para crear <form>Comentarios </form>
+        model.addAttribute("comentario", new Comentario());
+        
+        /**
+         * #######################
+         * ##    PÁGINACIÓN     ##
+         * #######################	 
+         */
+        // Configuración de paginación
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("fechaCreacion").ascending());
+        Page<Comentario> comentarios;
+
+        // Manejar errores si username o palabraClave son nulos o vacíos
+        if (username == null) {
+            username = "";
+        }
+        if (palabraClave == null) {
+            palabraClave = "";
+        }
+
+        if (!palabraClave.isEmpty()) {
+            comentarios = comentariosServicio.buscarPorPalabraClave(pageRequest, palabraClave);
+            System.out.println("#COMENTARIOS CON PALABRA CLAVE '" + palabraClave + "': " + comentarios);
+        } else if (!username.isEmpty() && usuarioServicio.existe(username)) {
+            comentarios = comentariosServicio.listarFiltroPorUsuario(pageRequest, username);
+            System.out.println("#COMENTARIOS DE USUARIO '" + username + "': " + comentarios);
+        } else {
+            comentarios = comentariosServicio.listarTodos(pageRequest);
+            System.out.println("#COMENTARIOS TOTALES: " + comentarios);
+        }
+
+        try {
+            PerfilUsuario perfilUsuario = usuarioServicio.obtenerPorUsername(usernameAuth).getPerfilusuario();
+            model.addAttribute("perfilUsuario", perfilUsuario);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         model.addAttribute("comentarios", comentarios);
         model.addAttribute("requestURI", request.getRequestURI());
 
@@ -111,46 +123,61 @@ public class UserController {
      * ##<FORM> COMENTARIO</FORM> ##
      * #############################	 
      */
-@GetMapping("/agregarComentario")
-@PreAuthorize("hasRole('USER')")
-   public String mostrarFormularioComentario(Model model) {
-	   
-	   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	    String username = authentication.getName();
-	 // Obtener UsuarioDTO en lugar de la entidad Usuario completa
+    /**
+     * Maneja las solicitudes GET a la URL "/user/agregarComentario".
+     * 
+     * <p>Este método muestra el formulario para agregar un nuevo comentario.</p>
+     * 
+     * @param model el modelo para la vista
+     * @return el nombre de la vista para el formulario de creación de comentarios
+     */
+    @GetMapping("/agregarComentario")
+    @PreAuthorize("hasRole('USER')")
+    public String mostrarFormularioComentario(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         UsuarioDTO usuarioDTO = usuarioServicio.obtenerUsuarioDTO(username);
-	    
-	   System.out.println("############# id:" +usuarioDTO.getId());
-	 
-	// Crear una nueva instancia de Comentario y añadirla al modelo
-       Comentario comentario = new Comentario();
-       comentario.setFechaCreacion(LocalDateTime.now());
-       model.addAttribute("comentario", comentario);
-       model.addAttribute("usuarioDTO", usuarioDTO); // Añadir el UsuarioDTO al modelo si es necesario
 
-	   return "/auth/user/formCrearComentario";
-   }
-   @PostMapping("/agregarComentario")
-   @PreAuthorize("hasRole('USER')")
-   public String agregarComentario(@Valid @ModelAttribute("comentario") Comentario comentario, 
-                                   BindingResult result, 
-                                   @RequestParam("usuarioId") Long usuarioId, 
-                                   
-                                   Model model) {
-       if (result.hasErrors()) {
-           return "/auth/user/formCrearComentario";
-       }
-       // Busca el usuario por el ID capturado
-       Usuario usuario = usuarioServicio.obtenerPorId(usuarioId);
-       // Asocia el usuario al comentario
-       comentario.setUsuario(usuario);
-       
-       System.out.println("## contenido ## " + comentario.toString());
-       
-       comentariosServicio.guardar(comentario);
-       return "redirect:/user/home";
-   }
-    
-  
-	
+        System.out.println("############# id:" + usuarioDTO.getId());
+
+        // Crear una nueva instancia de Comentario y añadirla al modelo
+        Comentario comentario = new Comentario();
+        comentario.setFechaCreacion(LocalDateTime.now());
+        model.addAttribute("comentario", comentario);
+        model.addAttribute("usuarioDTO", usuarioDTO); // Añadir el UsuarioDTO al modelo si es necesario
+
+        return "/auth/user/formCrearComentario";
+    }
+
+    /**
+     * Maneja las solicitudes POST a la URL "/user/agregarComentario".
+     * 
+     * <p>Este método procesa la creación de un nuevo comentario asociado a un usuario.</p>
+     * 
+     * @param comentario el comentario a agregar
+     * @param result el resultado de la validación del formulario
+     * @param usuarioId el ID del usuario asociado al comentario
+     * @param model el modelo para la vista
+     * @return la redirección a la página de inicio del usuario si el comentario es creado con éxito
+     */
+    @PostMapping("/agregarComentario")
+    @PreAuthorize("hasRole('USER')")
+    public String agregarComentario(@Valid @ModelAttribute("comentario") Comentario comentario,
+                                    BindingResult result,
+                                    @RequestParam("usuarioId") Long usuarioId,
+                                    Model model) {
+        if (result.hasErrors()) {
+            return "/auth/user/formCrearComentario";
+        }
+        // Busca el usuario por el ID capturado
+        Usuario usuario = usuarioServicio.obtenerPorId(usuarioId);
+        // Asocia el usuario al comentario
+        comentario.setUsuario(usuario);
+
+        System.out.println("## contenido ## " + comentario.toString());
+
+        comentariosServicio.guardar(comentario);
+        return "redirect:/user/home";
+    }
 }
+	

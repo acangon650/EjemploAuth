@@ -9,101 +9,311 @@
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #eef2f3;
   }
   .container {
     max-width: 800px;
     margin: auto;
-    background-color: #f8f8f8;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 30px;
   }
-  .header, .nav {
-    background-color: #ff6666;
+  .header {
+    background-color: #007bff;
     color: white;
     padding: 10px;
     border-radius: 8px;
-  }
-  .nav {
-    border-radius: 0;
     text-align: center;
   }
-  .nav a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
+  .accordion {
+    margin: 20px 0;
   }
-  .nav a:hover {
-    text-decoration: underline;
+  .accordion-item {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .accordion-header {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 4px;
+    user-select: none;
+  }
+  .accordion-content {
+    display: none;
+    padding: 10px;
   }
   .term {
     font-weight: bold;
+    margin-top: 20px;
   }
   .definition {
     margin-bottom: 15px;
   }
   .code-example {
     background-color: #e7e7e7;
-    border-left: 5px solid #ff6666;
+    border-left: 5px solid #007bff;
     padding: 10px;
     margin-top: 10px;
     font-family: "Courier New", Courier, monospace;
+    white-space: pre;
   }
 </style>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const headers = document.querySelectorAll('.accordion-header');
+    headers.forEach(header => {
+      header.addEventListener('click', function () {
+        const content = this.nextElementSibling;
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+      });
+    });
+  });
+</script>
 </head>
 <body>
-<div class="nav">
-  <a href="#identidad">Identidad</a> |
-  <a href="#credenciales">Credenciales</a> |
-  <a href="#autenticacion">Autenticación</a> |
-  <a href="#autorizacion">Autorización</a>
-</div>
 <div class="container">
   <div class="header">
     <h1>Términos Clave de Seguridad de Aplicaciones en Spring Boot</h1>
   </div>
-  <div class="definition" id="identidad">
-    <div class="term">Identidad:</div>
-    <div>Un actor único, típicamente un individuo conocido como usuario.</div>
-    <div class="code-example">
-      // Ejemplo: UserDetails userDetails = new User("username", "password", authorities);
+
+  <div class="accordion">
+    <div class="accordion-item">
+      <div class="accordion-header">Identidad</div>
+      <div class="accordion-content" id="identidad">
+        <div class="term">Identidad:</div>
+        <div>Un actor único, típicamente un individuo conocido como usuario.</div>
+        <div class="code-example">
+          // Ejemplo en la aplicación:<br>
+          UserDetails userDetails = new User("user1", "password", authorities);
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="definition" id="credenciales">
-    <div class="term">Credenciales:</div>
-    <div>Usualmente un ID de usuario y contraseña.</div>
-    <div class="code-example">
-      // Ejemplo: Authentication auth = new UsernamePasswordAuthenticationToken("username", "password");
+
+    <div class="accordion-item">
+      <div class="accordion-header">Credenciales</div>
+      <div class="accordion-content" id="credenciales">
+        <div class="term">Credenciales:</div>
+        <div>Usualmente un ID de usuario y contraseña.</div>
+        <div class="code-example">
+          // Ejemplo en la aplicación:<br>
+          Authentication auth = new UsernamePasswordAuthenticationToken("user1", "password");
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="definition" id="autenticacion">
-    <div class="term">Autenticación:</div>
-    <div>Es cómo la aplicación verifica la identidad del solicitante.</div>
-    <div class="code-example">
-      // Ejemplo: Authentication result = authenticationManager.authenticate(auth);
+
+    <div class="accordion-item">
+      <div class="accordion-header">Autenticación</div>
+      <div class="accordion-content" id="autenticacion">
+        <div class="term">Autenticación:</div>
+        <div>Es cómo la aplicación verifica la identidad del solicitante.</div>
+        <div class="code-example">
+          // Ejemplo en la aplicación:<br>
+          Authentication result = authenticationManager.authenticate(auth);
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="definition" id="autorizacion">
-    <div class="term">Autorización:</div>
-    <div>¿Puede un usuario realizar una acción?</div>
-    <div class="code-example">
-      // Ejemplo:
-      @PreAuthorize("hasRole('ADMIN')")
-      public String metodoAdministrativo() {
-          return "Acción administrativa realizada";
-      }
+
+    <div class="accordion-item">
+      <div class="accordion-header">Autorización</div>
+      <div class="accordion-content" id="autorizacion">
+        <div class="term">Autorización:</div>
+        <div>¿Puede un usuario realizar una acción?</div>
+        <div class="code-example">
+          // Ejemplo en la aplicación:<br>
+          @PreAuthorize("hasRole('ADMIN')")<br>
+          public String metodoAdministrativo() {<br>
+              return "Acción administrativa realizada";<br>
+          }
+        </div>
+        <div class="code-example">
+          // Ejemplo de creación de un usuario con autoridades en Spring Boot:<br>
+          List&lt;GrantedAuthority&gt; authorities = new ArrayList&lt;&gt;();<br>
+          authorities.add(new SimpleGrantedAuthority("ROLE_USER"));<br>
+          authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));<br>
+          UserDetails userDetails = new User("user1", "password", authorities);
+        </div>
+        <div class="code-example">
+          // Ejemplo en la aplicación en InitializarDatos:<br>
+          Usuario user1 = new Usuario();<br>
+          user1.setUsername("user1");<br>
+          user1.setPassword(passwordEncoder.encode("password"));<br>
+          user1.getRoles().add(RolUsuario.ROLE_USER);<br>
+          usuarioRepositorio.save(user1);
+        </div>
+      </div>
     </div>
-    <div class="code-example">
-      // Ejemplo de creación de un usuario con autoridades en Spring Boot
-      <pre>
-        List&lt;GrantedAuthority&gt; authorities = new ArrayList&lt;&gt;();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        UserDetails userDetails = new User("username", "password", authorities);
-      </pre>
+
+    <div class="accordion-item">
+      <div class="accordion-header">JWT (JSON Web Token)</div>
+      <div class="accordion-content" id="jwt">
+        <div class="term">JWT (JSON Web Token):</div>
+        <div>Un método de autenticación basado en tokens que se utilizan para verificar la identidad de los usuarios.</div>
+        <div class="code-example">
+          // Ejemplo de generación de un JWT:<br>
+          String token = Jwts.builder()<br>
+                         .setSubject("user1")<br>
+                         .signWith(SignatureAlgorithm.HS512, "secretKey")<br>
+                         .compact();
+        </div>
+        <div class="code-example">
+          // Ejemplo de validación de un JWT:<br>
+          Claims claims = Jwts.parser()<br>
+                          .setSigningKey("secretKey")<br>
+                          .parseClaimsJws(token)<br>
+                          .getBody();<br>
+          String username = claims.getSubject();
+        </div>
+      </div>
     </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">OAuth2</div>
+      <div class="accordion-content" id="oauth2">
+        <div class="term">OAuth2:</div>
+        <div>Un protocolo de autorización que permite a las aplicaciones obtener acceso limitado a las cuentas de usuario en un servicio HTTP.</div>
+        <div class="code-example">
+          // Ejemplo de configuración de OAuth2 en Spring Boot:<br>
+          @Configuration<br>
+          @EnableWebSecurity<br>
+          public class SecurityConfig extends WebSecurityConfigurerAdapter {<br>
+              @Override<br>
+              protected void configure(HttpSecurity http) throws Exception {<br>
+                  http<br>
+                      .oauth2Login()<br>
+                      .loginPage("/login")<br>
+                      .defaultSuccessUrl("/home");<br>
+              }<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">CSRF (Cross-Site Request Forgery)</div>
+      <div class="accordion-content" id="csrf">
+        <div class="term">CSRF (Cross-Site Request Forgery):</div>
+        <div>Un ataque que fuerza al usuario final a ejecutar acciones no deseadas en una aplicación web en la que está autenticado.</div>
+        <div class="code-example">
+          // Ejemplo de habilitación de protección CSRF en Spring Security:<br>
+          @Configuration<br>
+          @EnableWebSecurity<br>
+          public class SecurityConfig extends WebSecurityConfigurerAdapter {<br>
+              @Override<br>
+              protected void configure(HttpSecurity http) throws Exception {<br>
+                  http<br>
+                      .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())<br>
+                      .and()<br>
+                      .authorizeRequests()<br>
+                      .anyRequest().authenticated();<br>
+              }<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">Seguridad en las API REST</div>
+      <div class="accordion-content" id="api">
+        <div class="term">Seguridad en las API REST:</div>
+        <div>Las mejores prácticas para asegurar las API REST incluyen el uso de autenticación y autorización adecuadas.</div>
+        <div class="code-example">
+          // Ejemplo de seguridad en un endpoint REST:<br>
+          @RestController<br>
+          @RequestMapping("/api")<br>
+          public class ApiController {<br>
+              @GetMapping("/data")<br>
+              @PreAuthorize("hasRole('USER')")<br>
+              public String getData() {<br>
+                  return "Datos seguros";<br>
+              }<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">Manejo de Errores y Excepciones</div>
+      <div class="accordion-content" id="errores">
+        <div class="term">Manejo de Errores y Excepciones:</div>
+        <div>Las mejores prácticas para manejar errores y excepciones en una aplicación segura.</div>
+        <div class="code-example">
+          // Ejemplo de controlador de errores personalizado en Spring Boot:<br>
+          @ControllerAdvice<br>
+          public class GlobalExceptionHandler {<br>
+              @ExceptionHandler(Exception.class)<br>
+              public ResponseEntity<String> handleException(Exception e) {<br>
+                  return new ResponseEntity<>("Ocurrió un error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);<br>
+              }<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">Registro y Monitoreo de Seguridad</div>
+      <div class="accordion-content" id="monitoreo">
+        <div class="term">Registro y Monitoreo de Seguridad:</div>
+        <div>La importancia del registro de eventos de seguridad y el monitoreo de la aplicación.</div>
+        <div class="code-example">
+          // Ejemplo de configuración de logs de seguridad:<br>
+          @Configuration<br>
+          public class LoggingConfig {<br>
+              @Bean<br>
+              public Logger logger() {<br>
+                  return LoggerFactory.getLogger("SecurityLogger");<br>
+              }<br>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header">Gestión de Sesiones</div>
+      <div class="accordion-content" id="sesiones">
+        <div class="term">Gestión de Sesiones:</div>
+        <div>Cómo gestionar la información del usuario entre diferentes peticiones HTTP.</div>
+        <div class="code-example">
+          // Ejemplo de uso de sesiones en un controlador Spring Boot:<br>
+          @Controller<br>
+          public class SessionController {<br>
+              @GetMapping("/session")<br>
+              public String handleSession(HttpSession session) {<br>
+                  session.setAttribute("user", "John Doe");<br>
+                  return "sessionPage";<br>
+              }<br>
+          }
+        </div>
+        <div class="code-example">
+          // Ejemplo de configuración de tiempo de expiración de sesión en Spring Boot:<br>
+          @Configuration<br>
+          public class SessionConfig {<br>
+              @Bean<br>
+              public ServletListenerRegistrationBean<HttpSessionEventPublisher> sessionEventPublisher() {<br>
+                  return new ServletListenerRegistrationBean<>(new HttpSessionEventPublisher());<br>
+              }<br>
+          }
+        </div>
+        <div class="code-example">
+          // Ejemplo de invalidación de sesión en un controlador Spring Boot:<br>
+          @Controller<br>
+          public class LogoutController {<br>
+              @GetMapping("/logout")<br>
+              public String logout(HttpSession session) {<br>
+                  session.invalidate();<br>
+                  return "redirect:/login";<br>
+              }<br>
+          }
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 </body>
 </html>
+
