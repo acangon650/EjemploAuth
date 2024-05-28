@@ -33,6 +33,8 @@ import jakarta.validation.Valid;
 @Controller
 @RequestMapping("/user")
 public class UserController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private ComentarioServicio comentariosServicio;
@@ -65,6 +67,8 @@ public class UserController {
                        @RequestParam(required = false) String username,
                        @RequestParam(required = false) String palabraClave,
                        HttpServletRequest request) {
+    	
+    	logger.info("@ INFO :: ### Acceso a Página Home . ###");
 
         String usernameAuth = authentication.getName(); // Obtener el nombre de usuario del objeto de autenticación
         model.addAttribute("username", usernameAuth); // Agregarlo al modelo
